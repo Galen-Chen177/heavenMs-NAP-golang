@@ -1,0 +1,13 @@
+app:
+  port: 8080
+  userName: "admin"
+  passWord: "admin"
+  serAddr: "https://1.1.1.1:12345"
+
+mysql:
+  username: "admin"
+  password: "123456"
+  host: "1.1.1.1"
+  port: 3306
+  database: "heavenms"
+  conntime: "5s"

@@ -1,0 +1,7 @@
+*.exe
+*.log
+*.out
+
+build/
+# vscode debug
+__debug_bin*
