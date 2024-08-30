@@ -61,6 +61,7 @@ func mainInit(cfgFile string) error {
 	}
 
 	// TODO
+	// 重置所有玩家状态为未登录
 	// 清空过期点券
 	// 载入点券比例
 	// 载入未失效点券

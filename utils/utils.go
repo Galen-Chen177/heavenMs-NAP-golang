@@ -1,6 +1,10 @@
 package utils
 
-import "time"
+import (
+	"crypto/md5"
+	"fmt"
+	"time"
+)
 
 func Retry(times int, wait time.Duration, fn func() error) error {
 	if times <= 0 {
@@ -16,4 +20,13 @@ func Retry(times int, wait time.Duration, fn func() error) error {
 	}
 
 	return nil
+}
+
+func CalcStringMD5(str string) string {
+	if str == "" {
+		return ""
+	}
+	data := []byte(str)
+	b := md5.Sum(data)
+	return fmt.Sprintf("%x", b)
 }

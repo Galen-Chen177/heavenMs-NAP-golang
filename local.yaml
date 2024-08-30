@@ -3,11 +3,58 @@ app:
   userName: "admin"
   passWord: "admin"
   serAddr: "https://1.1.1.1:12345"
+  debug:
+    enabled: true
+  logger:
+    packet:
+      display: true
+      debug: true
+  admin: true
 
 mysql:
-  username: "admin"
+  username: "root"
   password: "123456"
-  host: "1.1.1.1"
+  host: "127.0.0.1"
   port: 3306
   database: "heavenms"
   conntime: "5s"
+
+server:
+  name: MXD-GALEN
+  flag: 3
+  limit:
+    online: 10
+    characters: 8
+  register:
+    auto: true
+  rand:
+    drop: true
+  login:
+    message:
+      content: "欢迎进行游戏"
+      event: "123"
+  channel:
+    port: 8090
+    count: 3
+  world:
+    rate:
+      exp: 5
+      gold: 5
+      drop:
+        normal: 5
+        boss: 10
+      cash: 5
+    flags: 3
+  mall:
+    port: 10000
+    disabled:
+      - "123"
+      - "3545"
+  job:
+    adventurer: true
+    Knights: true
+    WarGod: true
+  events:
+    - "123"
+    - "345"
+  

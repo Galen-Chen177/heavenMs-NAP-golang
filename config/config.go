@@ -10,6 +10,7 @@ import (
 )
 
 func ReadConfig(cfgFile string) {
+	logrus.Info("[config] 开始初始化")
 	if !strings.HasSuffix(cfgFile, ".yaml") {
 		logrus.Fatalf("仅支持yaml文件")
 	}
