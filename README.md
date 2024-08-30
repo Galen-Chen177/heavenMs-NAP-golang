@@ -17,6 +17,11 @@
 
 ## 依赖文件
 
-客户端
+### [WZ文件](https://github.com/Galen-Chen177/heavenMs-NAP-golang/releases/download/wz/wz_root.zip)
 
-[WZ文件](https://github.com/Galen-Chen177/heavenMs-NAP-golang/releases/download/wz/wz_root.zip)
+## 客户端下载
+083cn初始英文端：https://pan.baidu.com/s/1GAgyysoRqKsfv-ODvnGkfA 提取码：ysn1
+
+083cn初始英文端：https://pan.baidu.com/s/17z3pBKu3jz5AOJmB9eFzqQ 提取码：f5zc
+
+70%汉化小体积端: https://pan.baidu.com/s/1qhEgKyvz7HqWPdSfK8tkVA 提取码: ruct ——一个热心网友提供的客户端
