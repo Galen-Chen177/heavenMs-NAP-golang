@@ -9,6 +9,8 @@ import (
 
 	"heavenMs-NAP-golang/config"
 	"heavenMs-NAP-golang/internal/db"
+	"heavenMs-NAP-golang/internal/manager"
+	"heavenMs-NAP-golang/internal/wz"
 )
 
 func main() {
@@ -31,6 +33,12 @@ func main() {
 				Aliases:  []string{"c"},
 				Required: true,
 			},
+			&cli.StringFlag{
+				Name:     "wzfile",
+				Usage:    "wz file dir",
+				Aliases:  []string{"wz"},
+				Required: true,
+			},
 		},
 		Action: AppAction,
 	}
@@ -41,32 +49,31 @@ func main() {
 }
 
 func AppAction(ctx *cli.Context) error {
-	if err := mainInit(ctx.String("config")); err != nil {
+	if err := mainInit(ctx.String("config"), ctx.String("wzfile")); err != nil {
 		logrus.Fatalf("main init err:%v", err)
 	}
 
-	time.Sleep(time.Second)
+	if err := manager.NewManager().Run(); err != nil {
+		logrus.Error("manager run err:", err)
+		return err
+	}
+
 	return nil
 }
 
-func mainInit(cfgFile string) error {
+func mainInit(cfgFile, wzFile string) error {
 	start := time.Now()
 	defer func() {
 		logrus.Info("数据加载耗时:", time.Since(start))
 	}()
 	// 加载配置
 	config.ReadConfig(cfgFile)
+	// 初始化数据库
 	if err := db.NewGormConn(); err != nil {
 		return err
 	}
-
-	// TODO
-	// 重置所有玩家状态为未登录
-	// 清空过期点券
-	// 载入点券比例
-	// 载入未失效点券
-	// 加载最大的现金id
-	// 添加定时任务
+	// 加载wz文件
+	wz.InitWzManage(wzFile)
 
 	return nil
 }

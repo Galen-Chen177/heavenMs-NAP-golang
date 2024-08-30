@@ -37,6 +37,7 @@ type Account struct {
 	Votepoints     int       `gorm:"column:votepoints;default:0"`
 	Hwid           string    `gorm:"column:hwid;default:''"`
 	Language       int       `gorm:"column:language;default:2"`
+	LastGainHM     int       `gorm:"column:lastGainHM;default:0"`
 }
 
 type Alliance struct {

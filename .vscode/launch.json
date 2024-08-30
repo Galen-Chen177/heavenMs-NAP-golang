@@ -12,7 +12,9 @@
             "program": "${workspaceFolder}/main.go",
             "args": [
                 "-c",
-                "${workspaceFolder}/local.yaml"
+                "${workspaceFolder}/local.yaml",
+                "-wz",
+                "${workspaceFolder}/wz_root"
             ]
         }
     ]
