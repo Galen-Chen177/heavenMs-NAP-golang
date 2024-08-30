@@ -14,3 +14,9 @@
     go build -o GitHookPreCommitCheck ./main.go
     rm GitHookPreCommitCheck
     ```
+
+## 依赖文件
+
+客户端
+
+[WZ文件](https://github.com/Galen-Chen177/heavenMs-NAP-golang/releases/download/wz/wz_root.zip)

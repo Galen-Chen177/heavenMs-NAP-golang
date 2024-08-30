@@ -5,3 +5,6 @@
 build/
 # vscode debug
 __debug_bin*
+
+*.xml
+*.zip
