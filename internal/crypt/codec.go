@@ -22,7 +22,7 @@ func (u UnimplementedProtocolEncoder) Encode(input any, output io.Writer) error 
 
 	data, err := utils.InputToBytes(input)
 	if err != nil {
-		return global.InvalidEncodeInput
+		return global.ErrEncodeInput
 	}
 	_, err = output.Write(data)
 	return err
@@ -60,7 +60,7 @@ func (u UnimplementedProtocolCodec) Encode(input any, output io.Writer) error {
 	//TODO implement me
 	data, err := utils.InputToBytes(input)
 	if err != nil {
-		return global.InvalidEncodeInput
+		return global.ErrEncodeInput
 	}
 	_, err = output.Write(data)
 	return err

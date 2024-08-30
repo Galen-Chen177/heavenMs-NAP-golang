@@ -68,7 +68,7 @@ func (c *MapleCypher) OriginalIv() []byte {
 // Crypt 进行加密
 func (c *MapleCypher) Crypt(dst, src []byte) error {
 	if len(dst) < len(src) {
-		return global.SmallerLen
+		return global.ErrSmallerLen
 	}
 
 	remaining := len(src)

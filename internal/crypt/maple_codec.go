@@ -39,7 +39,7 @@ type MapleEncoder struct {
 func (e *MapleEncoder) Encode(input any, output io.Writer) error {
 	toBytes, err := utils.InputToBytes(input)
 	if err != nil {
-		return global.InvalidEncodeInput
+		return global.ErrEncodeInput
 	}
 	// @TODO debug
 	unencrypted := make([]byte, len(toBytes))
@@ -141,7 +141,7 @@ func bytesToOutput(src []byte, output any) error {
 	case encoding.BinaryUnmarshaler:
 		err = data.UnmarshalBinary(src)
 	default:
-		err = global.InvalidDecoderOutput
+		err = global.ErrDecoderOutput
 	}
 	return err
 }
@@ -178,7 +178,7 @@ func (e *MapleDecoder) Decode(input io.Reader, output io.Writer) error {
 
 			// 不是一个合法的包信息
 			if !e.cypher.CheckPacketHeader(int(header)) {
-				return global.InvalidPacket
+				return global.ErrPacket
 			}
 
 			packetLength = e.cypher.PacketLength(int(header))

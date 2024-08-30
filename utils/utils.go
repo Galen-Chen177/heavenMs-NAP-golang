@@ -104,7 +104,7 @@ func InputToBytes(input any) ([]byte, error) {
 	case encoding.BinaryMarshaler:
 		data, err = d.MarshalBinary()
 	default:
-		err = global.InvalidInput
+		err = global.ErrInput
 	}
 	return data, err
 }
