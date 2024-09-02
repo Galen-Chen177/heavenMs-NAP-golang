@@ -42,34 +42,34 @@ func NewGormConn() error {
 	}
 	GormDB = db
 
-	// TODO: model
-	GormDB.AutoMigrate(
-		model.Migration{},
-		model.Account{},
-		model.Alliance{},
-		model.Allianceguilds{},
-		model.AreaInfo{},
-		model.BbsReplies{},
-		model.BbsThreads{},
-		model.BosslogDaily{},
-		model.BosslogWeekly{},
-		model.Buddies{},
-		model.Characters{},
-		model.Cooldowns{},
-		model.DropDataGlobal{},
-		model.Dueyitems{},
-		model.Dueypackages{},
-		model.Eventstats{},
-		model.Famelog{},
-		model.Skillmacros{},
-		model.Skills{},
-		model.Specialcashitems{},
-		model.Storages{},
-		model.TempData{},
-		model.Trocklocations{},
-		model.Wishlists{},
-		model.Worldtransfers{},
-	)
+	// TODO: 建表语句先放sql文件里，后续在放入代码中
+	// GormDB.AutoMigrate(
+	// 	model.Migration{},
+	// 	model.Account{},
+	// 	model.Alliance{},
+	// 	model.Allianceguilds{},
+	// 	model.AreaInfo{},
+	// 	model.BbsReplies{},
+	// 	model.BbsThreads{},
+	// 	model.BosslogDaily{},
+	// 	model.BosslogWeekly{},
+	// 	model.Buddies{},
+	// 	model.Characters{},
+	// 	model.Cooldowns{},
+	// 	model.DropDataGlobal{},
+	// 	model.Dueyitems{},
+	// 	model.Dueypackages{},
+	// 	model.Eventstats{},
+	// 	model.Famelog{},
+	// 	model.Skillmacros{},
+	// 	model.Skills{},
+	// 	model.Specialcashitems{},
+	// 	model.Storages{},
+	// 	model.TempData{},
+	// 	model.Trocklocations{},
+	// 	model.Wishlists{},
+	// 	model.Worldtransfers{},
+	// )
 	if err := checkTable(GormDB); err != nil {
 		return err
 	}

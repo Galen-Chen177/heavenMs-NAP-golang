@@ -1,5 +1,232 @@
 -- 先执行他，下一个执行： 'db_drops.sql'
 
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+
+-- 创建库napms，设置编码为utf8mb4
+DROP DATABASE IF EXISTS `heavenms`;
+CREATE DATABASE `heavenms` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `heavenms`;
+
+-- 将默认charset全部设置成utf8mb4
+CREATE TABLE IF NOT EXISTS `accounts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(13) NOT NULL DEFAULT '',
+  `password` varchar(128) NOT NULL DEFAULT '',
+  `pin` varchar(10) NOT NULL DEFAULT '',
+  `pic` varchar(26) NOT NULL DEFAULT '',
+  `loggedin` tinyint(4) NOT NULL DEFAULT '0',
+  `lastlogin` timestamp NULL DEFAULT NULL,
+  `createdat` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `birthday` date NOT NULL DEFAULT '0000-00-00',
+  `banned` tinyint(1) NOT NULL DEFAULT '0',
+  `banreason` text,
+  `macs` tinytext,
+  `nxCredit` int(11) DEFAULT NULL,
+  `maplePoint` int(11) DEFAULT NULL,
+  `nxPrepaid` int(11) DEFAULT NULL,
+  `characterslots` tinyint(2) NOT NULL DEFAULT '3',
+  `gender` tinyint(2) NOT NULL DEFAULT '10',
+  `tempban` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `greason` tinyint(4) NOT NULL DEFAULT '0',
+  `tos` tinyint(1) NOT NULL DEFAULT '0',
+  `sitelogged` text,
+  `webadmin` int(1) DEFAULT '0',
+  `nick` varchar(20) DEFAULT NULL,
+  `mute` int(1) DEFAULT '0',
+  `email` varchar(45) DEFAULT NULL,
+  `ip` text,
+  `rewardpoints` int(11) NOT NULL DEFAULT '0',
+  `votepoints` int(11) NOT NULL DEFAULT '0',
+  `hwid` varchar(12) NOT NULL DEFAULT '',
+  `language` int(1) NOT NULL DEFAULT '2',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`),
+  KEY `ranking1` (`id`,`banned`),
+  INDEX (id, name),
+  INDEX (id, nxCredit, maplePoint, nxPrepaid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `alliance` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(13) NOT NULL,
+  `capacity` int(10) unsigned NOT NULL DEFAULT '2',
+  `notice` varchar(20) NOT NULL DEFAULT '',
+
+  `rank1` varchar(11) NOT NULL DEFAULT 'Master',
+  `rank2` varchar(11) NOT NULL DEFAULT 'Jr. Master',
+  `rank3` varchar(11) NOT NULL DEFAULT 'Member',
+  `rank4` varchar(11) NOT NULL DEFAULT 'Member',
+  `rank5` varchar(11) NOT NULL DEFAULT 'Member',
+  PRIMARY KEY (`id`),
+  INDEX (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `allianceguilds` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `allianceid` int(10) NOT NULL DEFAULT '-1',
+  `guildid` int(10) NOT NULL DEFAULT '-1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `area_info` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `charid` int(11) NOT NULL,
+  `area` int(11) NOT NULL,
+  `info` varchar(200) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `bosslog_daily` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `characterid` int(11) NOT NULL,
+  `bosstype` enum('ZAKUM','HORNTAIL','PINKBEAN','SCARGA','PAPULATUS') NOT NULL,
+  `attempttime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `bosslog_weekly` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `characterid` int(11) NOT NULL,
+  `bosstype` enum('ZAKUM','HORNTAIL','PINKBEAN','SCARGA','PAPULATUS') NOT NULL,
+  `attempttime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `bbs_replies` (
+  `replyid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `threadid` int(10) unsigned NOT NULL,
+  `postercid` int(10) unsigned NOT NULL,
+  `timestamp` bigint(20) unsigned NOT NULL,
+  `content` varchar(26) NOT NULL DEFAULT '',
+  PRIMARY KEY (`replyid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `bbs_threads` (
+  `threadid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `postercid` int(10) unsigned NOT NULL,
+  `name` varchar(26) NOT NULL DEFAULT '',
+  `timestamp` bigint(20) unsigned NOT NULL,
+  `icon` smallint(5) unsigned NOT NULL,
+  `replycount` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `startpost` text NOT NULL,
+  `guildid` int(10) unsigned NOT NULL,
+  `localthreadid` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`threadid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `buddies` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `characterid` int(11) NOT NULL,
+  `buddyid` int(11) NOT NULL,
+  `pending` tinyint(4) NOT NULL DEFAULT '0',
+  `group` varchar(17) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `characters` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `accountid` int(11) NOT NULL DEFAULT '0',
+  `world` int(11) NOT NULL DEFAULT '0',
+  `name` varchar(13) NOT NULL DEFAULT '',
+  `level` int(11) NOT NULL DEFAULT '1',
+  `exp` int(11) NOT NULL DEFAULT '0',
+  `gachaexp` int(11) NOT NULL DEFAULT '0',
+  `str` int(11) NOT NULL DEFAULT '12',
+  `dex` int(11) NOT NULL DEFAULT '5',
+  `luk` int(11) NOT NULL DEFAULT '4',
+  `int` int(11) NOT NULL DEFAULT '4',
+  `hp` int(11) NOT NULL DEFAULT '50',
+  `mp` int(11) NOT NULL DEFAULT '5',
+  `maxhp` int(11) NOT NULL DEFAULT '50',
+  `maxmp` int(11) NOT NULL DEFAULT '5',
+  `meso` int(11) NOT NULL DEFAULT '0',
+  `hpMpUsed` int(11) unsigned NOT NULL DEFAULT '0',
+  `job` int(11) NOT NULL DEFAULT '0',
+  `skincolor` int(11) NOT NULL DEFAULT '0',
+  `gender` int(11) NOT NULL DEFAULT '0',
+  `fame` int(11) NOT NULL DEFAULT '0',
+  `fquest` int(11) NOT NULL DEFAULT '0',
+  `hair` int(11) NOT NULL DEFAULT '0',
+  `face` int(11) NOT NULL DEFAULT '0',
+  `ap` int(11) NOT NULL DEFAULT '0',
+  `sp` varchar(128) NOT NULL DEFAULT '0,0,0,0,0,0,0,0,0,0',
+  `map` int(11) NOT NULL DEFAULT '0',
+  `spawnpoint` int(11) NOT NULL DEFAULT '0',
+  `gm` tinyint(1) NOT NULL DEFAULT '0',
+  `party` int(11) NOT NULL DEFAULT '0',
+  `buddyCapacity` int(11) NOT NULL DEFAULT '25',
+  `createdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `rank` int(10) unsigned NOT NULL DEFAULT '1',
+  `rankMove` int(11) NOT NULL DEFAULT '0',
+  `jobRank` int(10) unsigned NOT NULL DEFAULT '1',
+  `jobRankMove` int(11) NOT NULL DEFAULT '0',
+  `guildid` int(10) unsigned NOT NULL DEFAULT '0',
+  `guildrank` int(10) unsigned NOT NULL DEFAULT '5',
+  `messengerid` int(10) unsigned NOT NULL DEFAULT '0',
+  `messengerposition` int(10) unsigned NOT NULL DEFAULT '4',
+  `mountlevel` int(9) NOT NULL DEFAULT '1',
+  `mountexp` int(9) NOT NULL DEFAULT '0',
+  `mounttiredness` int(9) NOT NULL DEFAULT '0',
+  `omokwins` int(11) NOT NULL DEFAULT '0',
+  `omoklosses` int(11) NOT NULL DEFAULT '0',
+  `omokties` int(11) NOT NULL DEFAULT '0',
+  `matchcardwins` int(11) NOT NULL DEFAULT '0',
+  `matchcardlosses` int(11) NOT NULL DEFAULT '0',
+  `matchcardties` int(11) NOT NULL DEFAULT '0',
+  `MerchantMesos` int(11) DEFAULT '0',
+  `HasMerchant` tinyint(1) DEFAULT '0',
+  `equipslots` int(11) NOT NULL DEFAULT '24',
+  `useslots` int(11) NOT NULL DEFAULT '24',
+  `setupslots` int(11) NOT NULL DEFAULT '24',
+  `etcslots` int(11) NOT NULL DEFAULT '24',
+  `familyId` int(11) NOT NULL DEFAULT '-1',
+  `monsterbookcover` int(11) NOT NULL DEFAULT '0',
+  `allianceRank` int(10) NOT NULL DEFAULT '5',
+  `vanquisherStage` int(11) unsigned NOT NULL DEFAULT '0',
+  `ariantPoints` int(11) unsigned NOT NULL DEFAULT '0',
+  `dojoPoints` int(11) unsigned NOT NULL DEFAULT '0',
+  `lastDojoStage` int(10) unsigned NOT NULL DEFAULT '0',
+  `finishedDojoTutorial` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `vanquisherKills` int(11) unsigned NOT NULL DEFAULT '0',
+  `summonValue` int(11) unsigned NOT NULL DEFAULT '0',
+  `partnerId` int(11) NOT NULL DEFAULT '0',
+  `marriageItemId` int(11) NOT NULL DEFAULT '0',
+  `reborns` int(5) NOT NULL DEFAULT '0',
+  `PQPoints` int(11) NOT NULL DEFAULT '0',
+  `dataString` varchar(64) NOT NULL DEFAULT '',
+  `lastLogoutTime` timestamp NOT NULL DEFAULT '2015-01-01 05:00:00',
+  `lastExpGainTime` timestamp NOT NULL DEFAULT '2015-01-01 05:00:00',
+  `partySearch` tinyint(1) NOT NULL DEFAULT '1',
+  `jailexpire` bigint(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `accountid` (`accountid`),
+  KEY `party` (`party`),
+  KEY `ranking1` (`level`,`exp`),
+  KEY `ranking2` (`gm`,`job`),
+  INDEX (id, accountid, world),
+  INDEX (id, accountid, name)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 PACK_KEYS=0 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `cooldowns` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `charid` int(11) NOT NULL,
+  `SkillID` int(11) NOT NULL,
+  `length` bigint(20) unsigned NOT NULL,
+  `StartTime` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `temp_data` (
+  `dropperid` int(11) NOT NULL,
+  `itemid` int(11) NOT NULL DEFAULT '0',
+  `minimum_quantity` int(11) NOT NULL DEFAULT '1',
+  `maximum_quantity` int(11) NOT NULL DEFAULT '1',
+  `questid` int(11) NOT NULL DEFAULT '0',
+  `chance` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`dropperid`, `itemid`),
+  KEY `mobid` (`dropperid`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=0 ;
+
 INSERT IGNORE INTO `temp_data` (`dropperid`, `itemid`, `minimum_quantity`, `maximum_quantity`, `questid`, `chance`) VALUES
 (9400121, 4000138, 1, 1, 0, 600000),
 (9400121, 4010006, 1, 1, 0, 45000),
@@ -10204,8 +10431,7 @@ INSERT IGNORE INTO `temp_data` (`dropperid`, `itemid`, `minimum_quantity`, `maxi
 (3230104, 4031209, 1, 1, 3072, 500000),
 (3230306, 4031159, 1, 1, 2074, 500000),
 (9500400, 4031224, 1, 1, 3607, 1000000),
-(9500400, 4031223, 1, 1, 3608, 1000000),    
-# thanks Lame for noticing Hongbu’s gourd unavailable
+(9500400, 4031223, 1, 1, 3608, 1000000),    # thanks Lame for noticing Hongbu's gourd unavailable
 (9420003, 4031400, 1, 1, 8761, 1000000),
 (9420001, 4031401, 1, 1, 8761, 1000000),
 (9300097, 4031472, 1, 1, 6301, 100000),
@@ -12558,6 +12784,18 @@ INSERT IGNORE INTO `temp_data` (`dropperid`, `itemid`, `minimum_quantity`, `maxi
 (7140000, 4031171, 1, 1, 7101, 100000),
 (9500137, 4031171, 1, 1, 7101, 100000);
 
+CREATE TABLE IF NOT EXISTS `drop_data_global` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `continent` tinyint(1) NOT NULL DEFAULT '-1',
+  `itemid` int(11) NOT NULL DEFAULT '0',
+  `minimum_quantity` int(11) NOT NULL DEFAULT '1',
+  `maximum_quantity` int(11) NOT NULL DEFAULT '1',
+  `questid` int(11) NOT NULL DEFAULT '0',
+  `chance` int(11) NOT NULL DEFAULT '0',
+  `comments` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `mobid` (`continent`) USING BTREE
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC AUTO_INCREMENT=5 ;
 
 INSERT INTO `drop_data_global` (`id`, `continent`, `itemid`, `minimum_quantity`, `maximum_quantity`, `questid`, `chance`, `comments`) VALUES
 (1, -1, 4031865, 1, 1, 0, 35000, 'NX Card 100 PTS'),
@@ -12567,7 +12805,236 @@ INSERT INTO `drop_data_global` (`id`, `continent`, `itemid`, `minimum_quantity`,
 (5, -1, 2340000, 1, 1, 0, 1200, 'White Scroll'),
 (6, -1, 4001006, 1, 1, 0, 10000, 'Flaming Feather');
 
+CREATE TABLE IF NOT EXISTS `dueyitems` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `PackageId` int(10) unsigned NOT NULL DEFAULT '0',
+  `inventoryitemid` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `INVENTORYITEMID` (`inventoryitemid`),
+  KEY `PackageId` (`PackageId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
 
+CREATE TABLE IF NOT EXISTS `dueypackages` (
+  `PackageId` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ReceiverId` int(10) unsigned NOT NULL,
+  `SenderName` varchar(13) NOT NULL,
+  `Mesos` int(10) unsigned DEFAULT '0',
+  `TimeStamp` timestamp NOT NULL DEFAULT '2015-01-01 05:00:00',
+  `Message` varchar(200) NULL,
+  `Checked` tinyint(1) unsigned DEFAULT '1',
+  `Type` tinyint(1) unsigned DEFAULT '0',
+  PRIMARY KEY (`PackageId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `eventstats` (
+  `characterid` int(11) unsigned NOT NULL,
+  `name` varchar(11) NOT NULL DEFAULT '0' COMMENT '0',
+  `info` int(11) NOT NULL,
+  PRIMARY KEY (`characterid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `famelog` (
+  `famelogid` int(11) NOT NULL AUTO_INCREMENT,
+  `characterid` int(11) NOT NULL DEFAULT '0',
+  `characterid_to` int(11) NOT NULL DEFAULT '0',
+  `when` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`famelogid`),
+  KEY `characterid` (`characterid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `family_character` (
+  `cid` int(11) NOT NULL,
+  `familyid` int(11) NOT NULL,
+  `seniorid` int(11) NOT NULL,
+  `reputation` int(11) NOT NULL DEFAULT '0',
+  `todaysrep` int(11) NOT NULL DEFAULT '0',
+  `totalreputation` int(11) NOT NULL DEFAULT '0',
+  `reptosenior` int(11) NOT NULL DEFAULT '0',
+  `precepts` varchar(200) DEFAULT NULL,
+  `lastresettime` BIGINT(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`cid`),
+  INDEX (cid, familyid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `family_entitlement` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `charid` int(11) NOT NULL,
+  `entitlementid` int(11) NOT NULL,
+  `timestamp` BIGINT(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  INDEX (charid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `fredstorage` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `cid` int(10) unsigned NOT NULL,
+  `daynotes` int(4) unsigned NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY `cid_2` (`cid`),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `gifts` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `to` int(11) NOT NULL,
+  `from` varchar(13) NOT NULL,
+  `message` tinytext NOT NULL,
+  `sn` int(10) unsigned NOT NULL,
+  `ringid` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `guilds` (
+  `guildid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `leader` int(10) unsigned NOT NULL DEFAULT '0',
+  `GP` int(10) unsigned NOT NULL DEFAULT '0',
+  `logo` int(10) unsigned DEFAULT NULL,
+  `logoColor` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `name` varchar(45) NOT NULL,
+  `rank1title` varchar(45) NOT NULL DEFAULT 'Master',
+  `rank2title` varchar(45) NOT NULL DEFAULT 'Jr. Master',
+  `rank3title` varchar(45) NOT NULL DEFAULT 'Member',
+  `rank4title` varchar(45) NOT NULL DEFAULT 'Member',
+  `rank5title` varchar(45) NOT NULL DEFAULT 'Member',
+  `capacity` int(10) unsigned NOT NULL DEFAULT '10',
+  `logoBG` int(10) unsigned DEFAULT NULL,
+  `logoBGColor` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `notice` varchar(101) DEFAULT NULL,
+  `signature` int(11) NOT NULL DEFAULT '0',
+  `allianceId` int(11) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`guildid`),
+  INDEX (guildid, name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `hwidaccounts` (
+  `accountid` int(11) NOT NULL DEFAULT '0',
+  `hwid` varchar(40) NOT NULL DEFAULT '',
+  `relevance` tinyint(2) NOT NULL DEFAULT '0',
+  `expiresat` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`accountid`,`hwid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `hwidbans` (
+  `hwidbanid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `hwid` varchar(30) NOT NULL,
+  PRIMARY KEY (`hwidbanid`),
+  UNIQUE KEY `hwid_2` (`hwid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `inventoryequipment` (
+  `inventoryequipmentid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `inventoryitemid` int(10) unsigned NOT NULL DEFAULT '0',
+  `upgradeslots` int(11) NOT NULL DEFAULT '0',
+  `level` int(11) NOT NULL DEFAULT '0',
+  `str` int(11) NOT NULL DEFAULT '0',
+  `dex` int(11) NOT NULL DEFAULT '0',
+  `int` int(11) NOT NULL DEFAULT '0',
+  `luk` int(11) NOT NULL DEFAULT '0',
+  `hp` int(11) NOT NULL DEFAULT '0',
+  `mp` int(11) NOT NULL DEFAULT '0',
+  `watk` int(11) NOT NULL DEFAULT '0',
+  `matk` int(11) NOT NULL DEFAULT '0',
+  `wdef` int(11) NOT NULL DEFAULT '0',
+  `mdef` int(11) NOT NULL DEFAULT '0',
+  `acc` int(11) NOT NULL DEFAULT '0',
+  `avoid` int(11) NOT NULL DEFAULT '0',
+  `hands` int(11) NOT NULL DEFAULT '0',
+  `speed` int(11) NOT NULL DEFAULT '0',
+  `jump` int(11) NOT NULL DEFAULT '0',
+  `locked` int(11) NOT NULL DEFAULT '0',
+  `vicious` int(11) unsigned NOT NULL DEFAULT '0',
+  `itemlevel` int(11) NOT NULL DEFAULT '1',
+  `itemexp` int(11) unsigned NOT NULL DEFAULT '0',
+  `ringid` int(11) NOT NULL DEFAULT '-1',
+  PRIMARY KEY (`inventoryequipmentid`),
+  KEY `INVENTORYITEMID` (`inventoryitemid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `inventoryitems` (
+  `inventoryitemid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `type` tinyint(3) unsigned NOT NULL,
+  `characterid` int(11) DEFAULT NULL,
+  `accountid` int(11) DEFAULT NULL,
+  `itemid` int(11) NOT NULL DEFAULT '0',
+  `inventorytype` int(11) NOT NULL DEFAULT '0',
+  `position` int(11) NOT NULL DEFAULT '0',
+  `quantity` int(11) NOT NULL DEFAULT '0',
+  `owner` tinytext NOT NULL,
+  `petid` int(11) NOT NULL DEFAULT '-1',
+  `flag` int(11) NOT NULL,
+  `expiration` bigint(20) NOT NULL DEFAULT '-1',
+  `giftFrom` varchar(26) NOT NULL,
+  PRIMARY KEY (`inventoryitemid`),
+  KEY `CHARID` (`characterid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `inventorymerchant` (
+  `inventorymerchantid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `inventoryitemid` int(10) unsigned NOT NULL DEFAULT '0',
+  `characterid` int(11) DEFAULT NULL,
+  `bundles` int(10) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`inventorymerchantid`),
+  KEY `INVENTORYITEMID` (`inventoryitemid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `ipbans` (
+  `ipbanid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ip` varchar(40) NOT NULL DEFAULT '',
+  `aid` varchar(40) DEFAULT NULL,
+  PRIMARY KEY (`ipbanid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `keymap` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `characterid` int(11) NOT NULL DEFAULT '0',
+  `key` int(11) NOT NULL DEFAULT '0',
+  `type` int(11) NOT NULL DEFAULT '0',
+  `action` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `macbans` (
+  `macbanid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `mac` varchar(30) NOT NULL,
+  `aid` varchar(40) DEFAULT NULL,
+  PRIMARY KEY (`macbanid`),
+  UNIQUE KEY `mac_2` (`mac`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `macfilters` (
+  `macfilterid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `filter` varchar(30) NOT NULL,
+  PRIMARY KEY (`macfilterid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `makercreatedata` (
+  `id` tinyint(3) unsigned NOT NULL,
+  `itemid` int(11) NOT NULL,
+  `req_level` tinyint(3) unsigned NOT NULL,
+  `req_maker_level` tinyint(3) unsigned NOT NULL,
+  `req_meso` int(11) NOT NULL,
+  `req_item` int(11) NOT NULL,
+  `req_equip` int(11) NOT NULL,
+  `catalyst` int(11) NOT NULL,
+  `quantity` smallint(6) NOT NULL,
+  `tuc` tinyint(3) NOT NULL,
+  PRIMARY KEY (`id`,`itemid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `makerrecipedata` (
+  `itemid` int(11) NOT NULL,
+  `req_item` int(11) NOT NULL,
+  `count` smallint(6) NOT NULL,
+  PRIMARY KEY (`itemid`,`req_item`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `makerrewarddata` (
+  `itemid` int(11) NOT NULL,
+  `rewardid` int(11) NOT NULL,
+  `quantity` smallint(6) NOT NULL,
+  `prob` tinyint(3) unsigned NOT NULL DEFAULT '100',
+  PRIMARY KEY (`itemid`,`rewardid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 # updated with the MapleSkillMakerFetcher feature
 INSERT IGNORE INTO `makercreatedata` (`id`, `itemid`, `req_level`, `req_maker_level`, `req_meso`, `req_item`, `req_equip`, `catalyst`, `quantity`, `tuc`) VALUES
@@ -15436,6 +15903,12 @@ INSERT IGNORE INTO `makerrewarddata` (`itemid`, `rewardid`, `quantity`, `prob`) 
 
 # generated with the MapleSkillMakerReagentIndexer feature
 
+CREATE TABLE IF NOT EXISTS `makerreagentdata` (
+  `itemid` int(11) NOT NULL,
+  `stat` varchar(20) NOT NULL,
+  `value` smallint(6) NOT NULL,
+  PRIMARY KEY (`itemid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT IGNORE INTO `makerreagentdata` (`itemid`, `stat`, `value`) VALUES
   (4250000, "incPAD", 1),
@@ -15483,6 +15956,36 @@ INSERT IGNORE INTO `makerreagentdata` (`itemid`, `stat`, `value`) VALUES
   (4251400, "randStat", 2),
   (4251401, "randStat", 3),
   (4251402, "randStat", 5);
+
+CREATE TABLE IF NOT EXISTS `marriages` (
+  `marriageid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `husbandid` int(10) unsigned NOT NULL DEFAULT '0',
+  `wifeid` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`marriageid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `medalmaps` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `characterid` int(11) NOT NULL,
+  `queststatusid` int(11) unsigned NOT NULL,
+  `mapid` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `queststatusid` (`queststatusid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `monsterbook` (
+  `charid` int(11) unsigned NOT NULL,
+  `cardid` int(11) NOT NULL,
+  `level` int(1) DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `monstercarddata` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `cardid` int(11) NOT NULL DEFAULT '0',
+  `mobid` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=309 ;
 
 INSERT INTO `monstercarddata` (`id`, `cardid`, `mobid`) VALUES
 (1, 2380000, 100100),
@@ -15794,7 +16297,120 @@ INSERT INTO `monstercarddata` (`id`, `cardid`, `mobid`) VALUES
 (307, 2388068, 3300006),
 (308, 2388069, 3300007);
 
+CREATE TABLE IF NOT EXISTS `mts_cart` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `cid` int(11) NOT NULL,
+  `itemid` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
 
+CREATE TABLE IF NOT EXISTS `mts_items` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `tab` int(11) NOT NULL DEFAULT '0',
+  `type` int(11) NOT NULL DEFAULT '0',
+  `itemid` int(10) unsigned NOT NULL DEFAULT '0',
+  `quantity` int(11) NOT NULL DEFAULT '1',
+  `seller` int(11) NOT NULL DEFAULT '0',
+  `price` int(11) NOT NULL DEFAULT '0',
+  `bid_incre` int(11) DEFAULT '0',
+  `buy_now` int(11) DEFAULT '0',
+  `position` int(11) DEFAULT '0',
+  `upgradeslots` int(11) DEFAULT '0',
+  `level` int(11) DEFAULT '0',
+  `itemlevel` int(11) NOT NULL DEFAULT '1',
+  `itemexp` int(11) unsigned NOT NULL DEFAULT '0',
+  `ringid` int(11) NOT NULL DEFAULT '-1',
+  `str` int(11) DEFAULT '0',
+  `dex` int(11) DEFAULT '0',
+  `int` int(11) DEFAULT '0',
+  `luk` int(11) DEFAULT '0',
+  `hp` int(11) DEFAULT '0',
+  `mp` int(11) DEFAULT '0',
+  `watk` int(11) DEFAULT '0',
+  `matk` int(11) DEFAULT '0',
+  `wdef` int(11) DEFAULT '0',
+  `mdef` int(11) DEFAULT '0',
+  `acc` int(11) DEFAULT '0',
+  `avoid` int(11) DEFAULT '0',
+  `hands` int(11) DEFAULT '0',
+  `speed` int(11) DEFAULT '0',
+  `jump` int(11) DEFAULT '0',
+  `locked` int(11) DEFAULT '0',
+  `isequip` int(1) DEFAULT '0',
+  `owner` varchar(16) DEFAULT '',
+  `sellername` varchar(16) NOT NULL,
+  `sell_ends` varchar(16) NOT NULL,
+  `transfer` int(2) DEFAULT '0',
+  `vicious` int(2) unsigned NOT NULL DEFAULT '0',
+  `flag` int(2) unsigned NOT NULL DEFAULT '0',
+  `expiration` bigint(20) NOT NULL DEFAULT '-1',
+  `giftFrom` varchar(26) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `namechanges` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `characterid` int(11) NOT NULL,
+  `old` varchar(13) NOT NULL,
+  `new` varchar(13) NOT NULL,
+  `requestTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `completionTime` timestamp NULL,
+  PRIMARY KEY (`id`),
+  INDEX (characterid)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `newyear` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `senderid` int(10) NOT NULL DEFAULT '-1',
+  `sendername` varchar(13) DEFAULT '',
+  `receiverid` int(10) NOT NULL DEFAULT '-1',
+  `receivername` varchar(13) DEFAULT '',
+  `message` varchar(120) DEFAULT '',
+  `senderdiscard` tinyint(1) NOT NULL DEFAULT '0',
+  `receiverdiscard` tinyint(1) NOT NULL DEFAULT '0',
+  `received` tinyint(1) NOT NULL DEFAULT '0',
+  `timesent` bigint(20) unsigned NOT NULL,
+  `timereceived` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `notes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `to` varchar(13) NOT NULL DEFAULT '',
+  `from` varchar(13) NOT NULL DEFAULT '',
+  `message` text NOT NULL,
+  `timestamp` bigint(20) unsigned NOT NULL,
+  `fame` int(11) NOT NULL DEFAULT '0',
+  `deleted` int(2) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `nxcode` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(17) NOT NULL UNIQUE,
+  `retriever` varchar(13) DEFAULT NULL,
+  `expiration` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `nxcode_items` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `codeid` int(11) NOT NULL,
+  `type` int(11) NOT NULL DEFAULT '5',
+  `item` int(11) NOT NULL DEFAULT '4000000',
+  `quantity` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `nxcoupons` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `couponid` int(11) NOT NULL DEFAULT '0',
+  `rate` int(11) NOT NULL DEFAULT '0',
+  `activeday` int(11) NOT NULL DEFAULT '0',
+  `starthour` int(11) NOT NULL DEFAULT '0',
+  `endhour` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=41 ;
 
 INSERT INTO `nxcoupons` (`id`, `couponid`, `rate`, `activeday`, `starthour`, `endhour`) VALUES
 (1,5211000,2,254,18,20),
@@ -15838,13 +16454,153 @@ INSERT INTO `nxcoupons` (`id`, `couponid`, `rate`, `activeday`, `starthour`, `en
 (39,5360008,2,254,6,10),
 (40,5360042,2,254,0,24);
 
+CREATE TABLE IF NOT EXISTS `pets` (
+  `petid` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(13) DEFAULT NULL,
+  `level` int(10) unsigned NOT NULL,
+  `closeness` int(10) unsigned NOT NULL,
+  `fullness` int(10) unsigned NOT NULL,
+  `summoned` tinyint(1) NOT NULL DEFAULT '0',
+  `flag` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`petid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+
+CREATE TABLE IF NOT EXISTS `petignores` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `petid` int(11) unsigned NOT NULL ,
+  `itemid` int(10) unsigned NOT NULL ,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_petignorepetid` FOREIGN KEY (`petid`) REFERENCES `pets` (`petid`) ON DELETE CASCADE    # thanks Optimist for noticing queries over petid taking too long, shavit for pointing out an improvement using foreign key
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `playerdiseases` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `charid` int(11) NOT NULL,
+  `disease` int(11) NOT NULL,
+  `mobskillid` int(11) NOT NULL,
+  `mobskilllv` int(11) NOT NULL,
+  `length` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `playernpcs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(13) NOT NULL,
+  `hair` int(11) NOT NULL,
+  `face` int(11) NOT NULL,
+  `skin` int(11) NOT NULL,
+  `gender` int(11) NOT NULL DEFAULT '0',
+  `x` int(11) NOT NULL,
+  `cy` int(11) NOT NULL DEFAULT '0',
+  `world` int(11) NOT NULL DEFAULT '0',
+  `map` int(11) NOT NULL DEFAULT '0',
+  `dir` int(11) NOT NULL DEFAULT '0',
+  `scriptid` int(10) unsigned NOT NULL DEFAULT '0',
+  `fh` int(11) NOT NULL DEFAULT '0',
+  `rx0` int(11) NOT NULL DEFAULT '0',
+  `rx1` int(11) NOT NULL DEFAULT '0',
+  `worldrank` int(11) NOT NULL DEFAULT '0',
+  `overallrank` int(11) NOT NULL DEFAULT '0',
+  `worldjobrank` int(11) NOT NULL DEFAULT '0',
+  `job` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=2147000000 ;
+
+CREATE TABLE IF NOT EXISTS `playernpcs_equip` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `npcid` int(11) NOT NULL DEFAULT '0',
+  `equipid` int(11) NOT NULL,
+  `type` int(11) NOT NULL DEFAULT '0',
+  `equippos` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `playernpcs_field` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `world` int(11) NOT NULL,
+  `map` int(11) NOT NULL,
+  `step` tinyint(1) NOT NULL DEFAULT '0',
+  `podium` smallint(8) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `plife` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `world` int(11) NOT NULL DEFAULT '-1',
+  `map` int(11) NOT NULL DEFAULT '0',
+  `life` int(11) NOT NULL DEFAULT '0',
+  `type` varchar(1) NOT NULL DEFAULT 'n',
+  `cy` int(11) NOT NULL DEFAULT '0',
+  `f` int(11) NOT NULL DEFAULT '0',
+  `fh` int(11) NOT NULL DEFAULT '0',
+  `rx0` int(11) NOT NULL DEFAULT '0',
+  `rx1` int(11) NOT NULL DEFAULT '0',
+  `x` int(11) NOT NULL DEFAULT '0',
+  `y` int(11) NOT NULL DEFAULT '0',
+  `hide` int(11) NOT NULL DEFAULT '0',
+  `mobtime` int(11) NOT NULL DEFAULT '0',
+  `team` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `questactions` (
+  `questactionid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `questid` int(11) NOT NULL DEFAULT '0',
+  `status` int(11) NOT NULL DEFAULT '0',
+  `data` blob NOT NULL,
+  PRIMARY KEY (`questactionid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `questprogress` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `characterid` int(11) NOT NULL,
+  `queststatusid` int(10) unsigned NOT NULL DEFAULT '0',
+  `progressid` int(11) NOT NULL DEFAULT '0',
+  `progress` varchar(15) CHARACTER SET latin1 COLLATE latin1_german1_ci NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `questrequirements` (
+  `questrequirementid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `questid` int(11) NOT NULL DEFAULT '0',
+  `status` int(11) NOT NULL DEFAULT '0',
+  `data` blob NOT NULL,
+  PRIMARY KEY (`questrequirementid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `queststatus` (
+  `queststatusid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `characterid` int(11) NOT NULL DEFAULT '0',
+  `quest` int(11) NOT NULL DEFAULT '0',
+  `status` int(11) NOT NULL DEFAULT '0',
+  `time` int(11) NOT NULL DEFAULT '0',
+  `expires` bigint(20) NOT NULL DEFAULT '0',
+  `forfeited` int(11) NOT NULL DEFAULT '0',
+  `completed` int(11) NOT NULL DEFAULT '0',
+  `info` tinyint(3) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`queststatusid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
 
 # quickslot table, by Shavit
-
+CREATE TABLE `quickslotkeymapped` (
+  `accountid` INT NOT NULL,
+  `keymap` BIGINT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`accountid`)
+);
 
 ALTER TABLE `quickslotkeymapped`
   ADD CONSTRAINT `quickslotkeymapped_accountid_fk` FOREIGN KEY (`accountid`) REFERENCES `accounts` (`id`) ON DELETE CASCADE;
 
+CREATE TABLE IF NOT EXISTS `reactordrops` (
+  `reactordropid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `reactorid` int(11) NOT NULL,
+  `itemid` int(11) NOT NULL,
+  `chance` int(11) NOT NULL,
+  `questid` int(5) NOT NULL DEFAULT '-1',
+  PRIMARY KEY (`reactordropid`),
+  KEY `reactorid` (`reactorid`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 PACK_KEYS=1 AUTO_INCREMENT=841 ;
 
 INSERT INTO `reactordrops` (`reactordropid`, `reactorid`, `itemid`, `chance`, `questid`) VALUES
 (1, 2001, 4031161, 1, 1008),
@@ -16672,7 +17428,62 @@ INSERT INTO `reactordrops` (`reactordropid`, `reactorid`, `itemid`, `chance`, `q
 (840, 1052001, 1532023, 3, -1),
 (841, 2092001, 1472063, 3, -1);
 
+CREATE TABLE IF NOT EXISTS `reports` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `reporttime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `reporterid` int(11) NOT NULL,
+  `victimid` int(11) NOT NULL,
+  `reason` tinyint(4) NOT NULL,
+  `chatlog` text NOT NULL,
+  `description` text NOT NULL,  # correct field name, thanks resinate
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
+CREATE TABLE IF NOT EXISTS `responses` (
+  `chat` text,
+  `response` text,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `rings` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `partnerRingId` int(11) NOT NULL DEFAULT '0',
+  `partnerChrId` int(11) NOT NULL DEFAULT '0',
+  `itemid` int(11) NOT NULL DEFAULT '0',
+  `partnername` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `savedlocations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `characterid` int(11) NOT NULL,
+  `locationtype` enum('FREE_MARKET','WORLDTOUR','FLORINA','INTRO','SUNDAY_MARKET','MIRROR','EVENT','BOSSPQ','HAPPYVILLE','DEVELOPER','MONSTER_CARNIVAL') NOT NULL,
+  `map` int(11) NOT NULL,
+  `portal` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `server_queue` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `accountid` int(11) NOT NULL DEFAULT '0',
+  `characterid` int(11) NOT NULL DEFAULT '0',
+  `type` tinyint(2) NOT NULL DEFAULT '0',
+  `value` int(10) NOT NULL DEFAULT '0',
+  `message` varchar(128) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `shopitems` (
+  `shopitemid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `shopid` int(10) unsigned NOT NULL,
+  `itemid` int(11) NOT NULL,
+  `price` int(11) NOT NULL,
+  `pitch` int(11) NOT NULL DEFAULT '0',
+  `position` int(11) NOT NULL COMMENT 'sort is an arbitrary field designed to give leeway when modifying shops. The lowest number is 104 and it increments by 4 for each item to allow decent space for swapping/inserting/removing items.',
+  PRIMARY KEY (`shopitemid`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=20047 ;
 
 INSERT INTO `shopitems` (`shopitemid`, `shopid`, `itemid`, `price`, `pitch`, `position`) VALUES
 (1, 11000, 1332005, 500, 0, 104),
@@ -20315,6 +21126,11 @@ INSERT INTO `shopitems` (`shopitemid`, `shopid`, `itemid`, `price`, `pitch`, `po
 (20253, 9270065, 2022477, 9200, 0, 25),
 (20254, 9270065, 2022476, 4200, 0, 26);
 
+CREATE TABLE IF NOT EXISTS `shops` (
+  `shopid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `npcid` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`shopid`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=10000000 ;
 
 INSERT INTO `shops` (`shopid`, `npcid`) VALUES
 (11000, 11000),
@@ -20593,12 +21409,74 @@ INSERT INTO `shopitems` ( `shopid`, `itemid`, `price`, `position`) VALUES
 (1337, 1902017, 1, 42),
 (1337, 1902018, 1, 43);
 
+CREATE TABLE IF NOT EXISTS `skillmacros` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `characterid` int(11) NOT NULL DEFAULT '0',
+  `position` tinyint(1) NOT NULL DEFAULT '0',
+  `skill1` int(11) NOT NULL DEFAULT '0',
+  `skill2` int(11) NOT NULL DEFAULT '0',
+  `skill3` int(11) NOT NULL DEFAULT '0',
+  `name` varchar(13) DEFAULT NULL,
+  `shout` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
 
+CREATE TABLE IF NOT EXISTS `skills` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `skillid` int(11) NOT NULL DEFAULT '0',
+  `characterid` int(11) NOT NULL DEFAULT '0',
+  `skilllevel` int(11) NOT NULL DEFAULT '0',
+  `masterlevel` int(11) NOT NULL DEFAULT '0',
+  `expiration` bigint(20) NOT NULL DEFAULT '-1',
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `skillpair` (`skillid`, `characterid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `specialcashitems` (
+  `id` int(11) NOT NULL,
+  `sn` int(11) NOT NULL,
+  `modifier` int(11) NOT NULL COMMENT '1024 is add/remove',
+  `info` int(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `specialcashitems` (`id`, `sn`, `modifier`, `info`) VALUES
 (1, 10000617, 1024, 1);
 
+CREATE TABLE IF NOT EXISTS `storages` (
+  `storageid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `accountid` int(11) NOT NULL DEFAULT '0',
+  `world` int(2) NOT NULL,
+  `slots` int(11) NOT NULL DEFAULT '0',
+  `meso` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`storageid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
 
+CREATE TABLE IF NOT EXISTS `trocklocations` (
+  `trockid` int(11) NOT NULL AUTO_INCREMENT,
+  `characterid` int(11) NOT NULL,
+  `mapid` int(11) NOT NULL,
+  `vip` int(2) NOT NULL,
+  PRIMARY KEY (`trockid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `wishlists` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `charid` int(11) NOT NULL,
+  `sn` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `worldtransfers` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `characterid` int(11) NOT NULL,
+  `from` tinyint(3) NOT NULL,
+  `to` tinyint(3) NOT NULL,
+  `requestTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `completionTime` timestamp NULL,
+  PRIMARY KEY (`id`),
+  INDEX (characterid)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=1 ;
 
 
 ALTER TABLE `dueyitems`
