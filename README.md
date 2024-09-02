@@ -15,6 +15,14 @@
     rm GitHookPreCommitCheck
     ```
 
+## 项目参考
+
+### [heaven-ms-nap](https://gitee.com/sleepnap/heaven-ms-nap)
+java 编写，没运行过，按UP主说法是直接能跑，GBK编码
+
+### [goms](https://github.com/jerbe/goms)
+golang 编写，不能运行，只实现了一部分
+
 ## 依赖文件
 
 ### [WZ文件](https://github.com/Galen-Chen177/heavenMs-NAP-golang/releases/download/wz/wz_root.zip)
